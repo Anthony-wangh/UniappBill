@@ -1,0 +1,15 @@
+{
+  "pages": [
+    "pages/bills/bills",
+    "pages/addBill/addBill",
+    "pages/statistics/statistics",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "Bill",
+    "navigationBarBackgroundColor": "#96C560",
+    "backgroundColor": "#f8f8f8"
+  },
+  "usingComponents": {}
+}

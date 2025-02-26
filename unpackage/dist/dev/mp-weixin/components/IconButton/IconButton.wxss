@@ -1,0 +1,18 @@
+
+.icon-button.data-v-535b2a1c {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent; /* 去掉背景色 */
+  border: none; /* 去掉边框 */
+  padding: 10px; /* 根据需要调整内边距 */
+}
+.icon.data-v-535b2a1c {
+  width: 24px; /* 图标宽度 */
+  height: 24px; /* 图标高度 */
+  margin-right: 5px; /* 图标与文字之间的间距 */
+}
+.label.data-v-535b2a1c {
+  font-size: 14px; /* 文字大小 */
+  color: #333; /* 文字颜色 */
+}
