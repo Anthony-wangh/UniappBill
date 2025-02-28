@@ -1,47 +1,41 @@
-<template>
-  <view>
-    <canvas :canvas-id="canvasId" :id="canvasId" class="charts" @touchend="tap"/>
-  </view>
-</template>
-
-<script>
-import uCharts from '@/uni_modules/qiun-data-charts/js_sdk/u-charts/u-charts.js';
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const uni_modules_qiunDataCharts_js_sdk_uCharts_uCharts = require("../../uni_modules/qiun-data-charts/js_sdk/u-charts/u-charts.js");
 var uChartsInstance = {};
-export default {
-	props: {
-	    chartData: {
-	      type: Object,
-	      required: true,
-		  },
-		 canvasId: {
-		      type: String,
-			  default:'ArBwWAWJdkXMBnJcQJJNACsjnSNbpxaM'
-		    },
-	  },
+const _sfc_main = {
+  props: {
+    chartData: {
+      type: Object,
+      required: true
+    },
+    canvasId: {
+      type: String,
+      default: "ArBwWAWJdkXMBnJcQJJNACsjnSNbpxaM"
+    }
+  },
   data() {
     return {
       cWidth: 750,
       cHeight: 500
     };
   },
-  
   methods: {
-    drawCharts(data){              
-      const ctx = uni.createCanvasContext(this.canvasId, this);
-      uChartsInstance[this.canvasId]= new uCharts({
+    drawCharts(data) {
+      const ctx = common_vendor.index.createCanvasContext(this.canvasId, this);
+      uChartsInstance[this.canvasId] = new uni_modules_qiunDataCharts_js_sdk_uCharts_uCharts.uCharts({
         type: "pie",
         context: ctx,
-        width: uni.upx2px(750),
-        height: uni.upx2px(500),
+        width: common_vendor.index.upx2px(750),
+        height: common_vendor.index.upx2px(500),
         series: data.series,
         animation: true,
         timing: "easeOut",
-        duration: 1000,
+        duration: 1e3,
         rotate: false,
         rotateLock: false,
         background: "#FFFFFF",
-        color: ["#1890FF","#91CB74","#FAC858","#EE6666","#73C0DE","#3CA272","#FC8452","#9A60B4","#ea7ccc"],
-        padding: [5,5,5,5],
+        color: ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"],
+        padding: [5, 5, 5, 5],
         fontSize: 13,
         fontColor: "#666666",
         dataLabel: true,
@@ -107,18 +101,20 @@ export default {
         }
       });
     },
-    tap(e){
-		const chart = uChartsInstance[this.canvasId];
-		chart.touchLegend(e);
-		chart.showToolTip(e);
+    tap(e) {
+      const chart = uChartsInstance[this.canvasId];
+      chart.touchLegend(e);
+      chart.showToolTip(e);
     }
   }
 };
-</script>
-
-<style scoped>
-  .charts{
-    width: 100%;
-    height: 500rpx;
-  }
-</style>
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return {
+    a: $props.canvasId,
+    b: $props.canvasId,
+    c: common_vendor.o((...args) => $options.tap && $options.tap(...args))
+  };
+}
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-ebc50cd4"]]);
+wx.createComponent(Component);
+//# sourceMappingURL=../../../.sourcemap/mp-weixin/components/Chart/PieChart.js.map

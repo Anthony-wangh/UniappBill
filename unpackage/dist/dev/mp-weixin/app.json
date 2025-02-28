@@ -3,7 +3,8 @@
     "pages/bills/bills",
     "pages/addBill/addBill",
     "pages/statistics/statistics",
-    "pages/settings/settings"
+    "pages/settings/settings",
+    "pages/statisticsNew/statisticsNew"
   ],
   "window": {
     "navigationBarTextStyle": "black",

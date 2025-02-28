@@ -1,1 +1,1 @@
-<view class="statistics-container data-v-fc23ec97"><l-echart class="r data-v-fc23ec97" u-r="chartRef" bindfinished="{{b}}" style="width:100%;height:400px" u-i="fc23ec97-0" bind:__l="__l"></l-echart></view>
+<view class="statistics-container"><view class="month-picker"><view class="arrow" bindtap="{{a}}">◀</view><text class="current-month">{{b}}</text><view class="arrow" bindtap="{{c}}">▶</view></view><pie-chart wx:if="{{e}}" class="r" u-r="pieChart" u-i="380879e3-0" bind:__l="__l" u-p="{{e}}"></pie-chart></view>

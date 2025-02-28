@@ -1,250 +1,108 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-require("../../uni_modules/lime-echart/static/echarts.min");
+const PieChart = () => "../../components/Chart/PieChart.js";
 const _sfc_main = {
+  components: {
+    PieChart
+  },
   data() {
     return {
-      bills: [],
+      chartData: {
+        series: [
+          {
+            data: [
+              { name: "一班", value: 256 },
+              { name: "二班", value: 123 },
+              { name: "三班", value: 20 },
+              { name: "四班", value: 0 },
+              { name: "五班", value: 0 }
+            ]
+          }
+        ]
+      },
       // 用来存储账单数据
+      bills: [],
       categories: [
-        { name: "购物", color: "#ff6b6b", type: "expense" },
-        { name: "餐饮", color: "#48dbfb", type: "expense" },
-        { name: "交通", color: "#f368e0", type: "expense" },
-        { name: "娱乐", color: "#ff9f1c", type: "expense" },
+        {
+          name: "购物",
+          color: "#ff6b6b",
+          type: "expense"
+        },
+        {
+          name: "餐饮",
+          color: "#48dbfb",
+          type: "expense"
+        },
+        {
+          name: "交通",
+          color: "#f368e0",
+          type: "expense"
+        },
         { name: "房屋", color: "#eb3b5a", type: "expense" },
-        { name: "工资", color: "#1dd1a1", type: "income" },
-        { name: "奖金", color: "#2ecc71", type: "income" }
+        { name: "工资", color: "#1dd1a1", type: "income" }
       ],
-      viewType: "monthly",
-      // 默认显示当月统计
-      currentYear: (/* @__PURE__ */ new Date()).getFullYear(),
-      years: [],
-      // 存储可选择的年份
-      pieChartInstance: null,
-      barChartInstance: null
+      currentDate: /* @__PURE__ */ new Date()
     };
   },
-  mounted() {
-  },
-  methods: {
-    init() {
-      this.loadEcharts();
-      this.loadBills();
-      this.initYears();
-    },
-    loadEcharts() {
-      if (this.viewType === "monthly") {
-        this.drawPieChart();
-      } else {
-        this.drawBarChart();
-      }
-    },
-    loadBills() {
-      const storedBills = common_vendor.index.getStorageSync("bills") || [];
-      this.bills = storedBills;
-    },
-    initYears() {
-      const minYear = Math.min(...this.bills.map((bill) => new Date(bill.date).getFullYear()));
-      const maxYear = (/* @__PURE__ */ new Date()).getFullYear();
-      for (let year = minYear; year <= maxYear; year++) {
-        this.years.push(year);
-      }
-    },
-    setViewType(type) {
-      this.viewType = type;
-      if (type === "monthly") {
-        this.drawPieChart();
-      } else if (type === "yearly") {
-        this.drawBarChart();
-      }
-    },
-    onYearChange(e) {
-      this.currentYear = this.years[e.detail.value];
-      this.drawBarChart();
-    },
-    drawPieChart() {
-      const query = common_vendor.index.createSelectorQuery().in(this);
-      query.select("#pieChart").fields({ node: true, size: true }).exec((res) => {
-        if (res[0] && res[0].node) {
-          const canvas = res[0].node;
-          canvas.getContext("2d");
-          const width = res[0].width;
-          const height = res[0].height;
-          if (this.pieChartInstance) {
-            this.pieChartInstance.dispose();
-          }
-          this.pieChartInstance = this.$refs.chart(canvas, null, {
-            width,
-            height,
-            devicePixelRatio: common_vendor.index.getSystemInfoSync().pixelRatio
-          });
-          this.updatePieChart();
-        }
-      });
-    },
-    updatePieChart() {
-      const option = {
-        title: {
-          text: "当月账单分类统计",
-          left: "center"
-        },
-        tooltip: {
-          trigger: "item"
-        },
-        legend: {
-          orient: "vertical",
-          left: "left"
-        },
-        series: [
-          {
-            name: "金额",
-            type: "pie",
-            radius: "50%",
-            data: this.monthlyData,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)"
-              }
-            }
-          }
-        ]
-      };
-      this.pieChartInstance.setOption(option);
-    },
-    drawBarChart() {
-      const query = common_vendor.index.createSelectorQuery().in(this);
-      query.select("#barChart").fields({ node: true, size: true }).exec((res) => {
-        if (res[0] && res[0].node) {
-          const canvas = res[0].node;
-          canvas.getContext("2d");
-          const width = res[0].width;
-          const height = res[0].height;
-          if (this.barChartInstance) {
-            this.barChartInstance.dispose();
-          }
-          this.barChartInstance = this.$refs.chart.init(canvas, null, {
-            width,
-            height,
-            devicePixelRatio: common_vendor.index.getSystemInfoSync().pixelRatio
-          });
-          this.updateBarChart();
-        }
-      });
-    },
-    updateBarChart() {
-      const months = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
-      const data = this.yearlyData;
-      const option = {
-        title: {
-          text: `${this.currentYear}年每月收支统计`,
-          left: "center"
-        },
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "shadow"
-          }
-        },
-        legend: {
-          data: ["收入", "支出"],
-          top: "10%"
-        },
-        xAxis: {
-          type: "category",
-          data: months
-        },
-        yAxis: {
-          type: "value"
-        },
-        series: [
-          {
-            name: "收入",
-            type: "bar",
-            stack: "total",
-            label: {
-              show: true
-            },
-            emphasis: {
-              focus: "series"
-            },
-            data: data.map((item) => item.income)
-          },
-          {
-            name: "支出",
-            type: "bar",
-            stack: "total",
-            label: {
-              show: true
-            },
-            emphasis: {
-              focus: "series"
-            },
-            data: data.map((item) => item.expense)
-          }
-        ]
-      };
-      this.barChartInstance.setOption(option);
-    }
+  onShow() {
+    this.loadBills();
+    this.$refs.pieChart.drawCharts(this.chartData);
   },
   computed: {
-    monthlyData() {
-      const year = (/* @__PURE__ */ new Date()).getFullYear();
-      const month = (/* @__PURE__ */ new Date()).getMonth();
+    currentMonth() {
+      return this.currentDate.toLocaleDateString("zh-CN", { year: "numeric", month: "long" });
+    }
+  },
+  methods: {
+    loadBills() {
+      const bills = common_vendor.index.getStorageSync("bills") || [];
+      this.bills = bills;
+      this.filterBillsByMonth();
+    },
+    filterBillsByMonth() {
+      const year = this.currentDate.getFullYear();
+      const month = this.currentDate.getMonth();
       const filteredBills = this.bills.filter((bill) => {
-        const billDate = new Date(bill.date);
+        const billDate = new Date(bill.time);
         return billDate.getFullYear() === year && billDate.getMonth() === month;
       });
-      const categoryTotals = {};
-      filteredBills.forEach((bill) => {
-        if (!categoryTotals[bill.category]) {
-          categoryTotals[bill.category] = 0;
-        }
-        categoryTotals[bill.category] += Number(bill.amount);
+      const grouped = [];
+      this.categories.forEach((category) => {
+        const sery = {};
+        sery.name = category.name;
+        const v = filteredBills.filter((item) => item.category === category.name).reduce((sum, item) => sum + Number(item.amount), 0).toFixed(2);
+        sery.value = Number(v);
+        grouped.push(sery);
       });
-      return Object.keys(categoryTotals).map((category) => ({
-        name: category,
-        value: categoryTotals[category]
-      }));
+      var templateData = {};
+      const seriesItem = {};
+      seriesItem.data = grouped;
+      templateData.series = [seriesItem];
+      this.chartData = templateData;
     },
-    yearlyData() {
-      const year = this.currentYear;
-      const filteredBills = this.bills.filter((bill) => {
-        const billDate = new Date(bill.date);
-        return billDate.getFullYear() === year;
-      });
-      const monthlyTotals = Array(12).fill({ income: 0, expense: 0 });
-      filteredBills.forEach((bill) => {
-        const monthIndex = new Date(bill.date).getMonth();
-        if (Number(bill.amount) > 0) {
-          monthlyTotals[monthIndex].income += Number(bill.amount);
-        } else {
-          monthlyTotals[monthIndex].expense -= Number(bill.amount);
-        }
-      });
-      return monthlyTotals.map((total, index) => ({
-        month: index + 1,
-        income: total.income,
-        expense: total.expense
-      }));
+    changeMonth(offset) {
+      const newDate = new Date(this.currentDate);
+      newDate.setMonth(newDate.getMonth() + offset);
+      this.currentDate = newDate;
+      this.filterBillsByMonth();
     }
   }
 };
 if (!Array) {
-  const _easycom_l_echart2 = common_vendor.resolveComponent("l-echart");
-  _easycom_l_echart2();
-}
-const _easycom_l_echart = () => "../../uni_modules/lime-echart/components/l-echart/l-echart.js";
-if (!Math) {
-  _easycom_l_echart();
+  const _component_PieChart = common_vendor.resolveComponent("PieChart");
+  _component_PieChart();
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
-    a: common_vendor.sr("chartRef", "fc23ec97-0"),
-    b: common_vendor.o($options.init)
+    a: common_vendor.o(($event) => $options.changeMonth(-1)),
+    b: common_vendor.t($options.currentMonth),
+    c: common_vendor.o(($event) => $options.changeMonth(1)),
+    d: common_vendor.sr("pieChart", "380879e3-0"),
+    e: common_vendor.p({
+      chartData: $data.chartData
+    })
   };
 }
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-fc23ec97"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render]]);
 wx.createPage(MiniProgramPage);
 //# sourceMappingURL=../../../.sourcemap/mp-weixin/pages/statistics/statistics.js.map

@@ -1,33 +1,36 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const uni_modules_qiunDataCharts_js_sdk_uCharts_uCharts = require("../../uni_modules/qiun-data-charts/js_sdk/u-charts/u-charts.js");
-var uChartsInstance = {};
 const _sfc_main = {
-  props: {
-    chartData: {
-      type: Object,
-      required: true
-    }
-  },
   data() {
     return {
-      cWidth: 750,
-      cHeight: 500
+      chartData: {
+        series: [
+          {
+            data: [
+              { name: "一班", value: 50 },
+              { name: "二班", value: 30 },
+              { name: "三班", value: 20 },
+              { name: "四班", value: 18 },
+              { name: "五班", value: 8 }
+            ]
+          }
+        ]
+      },
+      canvasId: "ArBwWAWJdkXMBnJcQJJNACsjnSNbpxaM"
     };
   },
   onReady() {
-    this.cWidth = common_vendor.index.upx2px(750);
-    this.cHeight = common_vendor.index.upx2px(500);
-    this.getServerData();
+    this.drawCharts();
   },
   methods: {
-    drawCharts(id, data) {
-      const ctx = common_vendor.index.createCanvasContext(id, this);
-      uChartsInstance[id] = new uni_modules_qiunDataCharts_js_sdk_uCharts_uCharts.uCharts({
+    drawCharts() {
+      const ctx = common_vendor.index.createCanvasContext(this.canvasId, this);
+      new uni_modules_qiunDataCharts_js_sdk_uCharts_uCharts.uCharts({
         type: "pie",
         context: ctx,
-        width: this.cWidth,
-        height: this.cHeight,
+        width: common_vendor.index.upx2px(750),
+        height: common_vendor.index.upx2px(500),
         series: this.chartData.series,
         animation: true,
         timing: "easeOut",
@@ -103,14 +106,20 @@ const _sfc_main = {
       });
     },
     tap(e) {
-      uChartsInstance[e.target.id].touchLegend(e);
-      uChartsInstance[e.target.id].showToolTip(e);
+      const chart = new uni_modules_qiunDataCharts_js_sdk_uCharts_uCharts.uCharts({
+        type: "pie",
+        context: common_vendor.index.createCanvasContext(this.canvasId, this)
+      });
+      chart.touchLegend(e);
+      chart.showToolTip(e);
     }
   }
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
-    a: common_vendor.o((...args) => $options.tap && $options.tap(...args))
+    a: $data.canvasId,
+    b: $data.canvasId,
+    c: common_vendor.o((...args) => $options.tap && $options.tap(...args))
   };
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-40e74c80"]]);

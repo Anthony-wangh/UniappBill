@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "统计",
   "usingComponents": {
-    "l-echart": "../../uni_modules/lime-echart/components/l-echart/l-echart"
+    "pie-chart": "../../components/Chart/PieChart"
   }
 }
