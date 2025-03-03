@@ -1,0 +1,1 @@
+<view class="icon-button data-v-652885f3" bindtap="{{c}}"><image src="{{a}}" class="icon data-v-652885f3"></image><text class="label data-v-652885f3">{{b}}</text></view>

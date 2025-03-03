@@ -69,7 +69,7 @@
      
       <IconButton 
         class="nav-btn" 
-		iconSrc="/static/statiscs.png"
+		iconSrc="/static/qq.png"
 		label="统计"
         @click="navigateTo('statistics')"
       >
@@ -77,7 +77,7 @@
       </IconButton>
       <IconButton 
         class="nav-btn" 
-		iconSrc="/static/setting.png"
+		iconSrc="/static/qq.png"
 		label="设置"
         @click="navigateTo('settings')"
       >

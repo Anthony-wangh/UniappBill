@@ -27,7 +27,7 @@
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "Bill",
+		"navigationBarTitleText": "小胖账本",
 		"navigationBarBackgroundColor": "#96C560",
 		"backgroundColor": "#f8f8f8"
 	},

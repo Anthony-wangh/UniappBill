@@ -139,12 +139,12 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     k: common_vendor.o(($event) => $options.navigateTo("addBill")),
     l: common_vendor.o(($event) => $options.navigateTo("statistics")),
     m: common_vendor.p({
-      iconSrc: "/static/statiscs.png",
+      iconSrc: "/static/qq.png",
       label: "统计"
     }),
     n: common_vendor.o(($event) => $options.navigateTo("settings")),
     o: common_vendor.p({
-      iconSrc: "/static/setting.png",
+      iconSrc: "/static/qq.png",
       label: "设置"
     })
   });

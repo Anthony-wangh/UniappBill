@@ -6,7 +6,6 @@ if (!Math) {
   "./pages/addBill/addBill.js";
   "./pages/statistics/statistics.js";
   "./pages/settings/settings.js";
-  "./pages/statisticsNew/statisticsNew.js";
 }
 const _sfc_main = {
   onLaunch: function() {

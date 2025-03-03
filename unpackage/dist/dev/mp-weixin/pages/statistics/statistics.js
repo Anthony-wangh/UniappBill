@@ -1,27 +1,59 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const PieChart = () => "../../components/Chart/PieChart.js";
+const ColumnChart = () => "../../components/Chart/ColumnChart.js";
 const _sfc_main = {
   components: {
-    PieChart
+    PieChart,
+    ColumnChart
   },
   data() {
     return {
+      columnChartData: {
+        categories: ["2018", "2019", "2020", "2021", "2022", "2023"],
+        series: [
+          {
+            name: "目标值",
+            data: [35, 36, 31, 33, 13, 34]
+          },
+          {
+            name: "完成量",
+            data: [18, 27, 21, 24, 6, 28]
+          }
+        ]
+      },
+      groupBills: [],
       chartData: {
         series: [
           {
             data: [
-              { name: "一班", value: 256 },
-              { name: "二班", value: 123 },
-              { name: "三班", value: 20 },
-              { name: "四班", value: 0 },
-              { name: "五班", value: 0 }
+              {
+                name: "一班",
+                value: 256
+              },
+              {
+                name: "二班",
+                value: 123
+              },
+              {
+                name: "三班",
+                value: 20
+              },
+              {
+                name: "四班",
+                value: 0
+              },
+              {
+                name: "五班",
+                value: 0
+              }
             ]
           }
         ]
       },
       // 用来存储账单数据
       bills: [],
+      billsInCurrentMouth: [],
       categories: [
         {
           name: "购物",
@@ -38,39 +70,53 @@ const _sfc_main = {
           color: "#f368e0",
           type: "expense"
         },
-        { name: "房屋", color: "#eb3b5a", type: "expense" },
-        { name: "工资", color: "#1dd1a1", type: "income" }
+        {
+          name: "房屋",
+          color: "#eb3b5a",
+          type: "expense"
+        }
       ],
       currentDate: /* @__PURE__ */ new Date()
     };
   },
   onShow() {
     this.loadBills();
-    this.$refs.pieChart.drawCharts(this.chartData);
+    this.update();
   },
   computed: {
     currentMonth() {
-      return this.currentDate.toLocaleDateString("zh-CN", { year: "numeric", month: "long" });
+      return this.currentDate.toLocaleDateString("zh-CN", {
+        year: "numeric",
+        month: "long"
+      });
     }
   },
   methods: {
+    update() {
+      this.filterBillsByMonth();
+      this.updatePieChart();
+      this.updateColumnChart();
+      this.$refs.pieChart.drawCharts(this.chartData);
+      this.$refs.columnChart.drawCharts(this.columnChartData);
+    },
     loadBills() {
       const bills = common_vendor.index.getStorageSync("bills") || [];
       this.bills = bills;
-      this.filterBillsByMonth();
     },
     filterBillsByMonth() {
       const year = this.currentDate.getFullYear();
       const month = this.currentDate.getMonth();
-      const filteredBills = this.bills.filter((bill) => {
+      this.billsInCurrentMouth = this.bills.filter((bill) => {
         const billDate = new Date(bill.time);
         return billDate.getFullYear() === year && billDate.getMonth() === month;
       });
+    },
+    updatePieChart() {
       const grouped = [];
       this.categories.forEach((category) => {
         const sery = {};
         sery.name = category.name;
-        const v = filteredBills.filter((item) => item.category === category.name).reduce((sum, item) => sum + Number(item.amount), 0).toFixed(2);
+        const v = this.billsInCurrentMouth.filter((item) => item.category === category.name).reduce((sum, item) => sum + Number(item.amount), 0).toFixed(2);
         sery.value = Number(v);
         grouped.push(sery);
       });
@@ -79,29 +125,98 @@ const _sfc_main = {
       seriesItem.data = grouped;
       templateData.series = [seriesItem];
       this.chartData = templateData;
+      this.groupBills = grouped.sort((a, b) => {
+        return a.value > b.value;
+      });
+    },
+    updateColumnChart() {
+      const groupedExpense = {};
+      const groupedIncome = {};
+      const days = [];
+      this.billsInCurrentMouth.forEach((bill) => {
+        const date = new Date(bill.time).getDay().toString();
+        if (bill.type === "expense") {
+          if (!groupedExpense[date]) {
+            groupedExpense[date] = 0;
+            if (days.findIndex((c) => c === date) === -1)
+              days.push(date);
+          }
+          groupedExpense[date] = groupedExpense[date] + Number(bill.amount);
+        } else {
+          if (!groupedIncome[date]) {
+            groupedIncome[date] = 0;
+            if (days.findIndex((c) => c === date) === -1)
+              days.push(date);
+          }
+          groupedIncome[date] = groupedIncome[date] + Number(bill.amount);
+        }
+      });
+      const incomeList = [];
+      const expenseList = [];
+      days.forEach((day) => {
+        if (groupedIncome[day])
+          incomeList.push(groupedIncome[day]);
+        else
+          incomeList.push(0);
+        if (groupedExpense[day])
+          expenseList.push(groupedExpense[day]);
+        else
+          expenseList.push(0);
+      });
+      var templateData = {};
+      const seriesItem1 = {
+        name: "支出",
+        data: expenseList
+      };
+      const seriesItem2 = {
+        name: "收入",
+        data: incomeList
+      };
+      templateData.categories = days;
+      templateData.series = [seriesItem1, seriesItem2];
+      this.columnChartData = templateData;
     },
     changeMonth(offset) {
       const newDate = new Date(this.currentDate);
       newDate.setMonth(newDate.getMonth() + offset);
       this.currentDate = newDate;
-      this.filterBillsByMonth();
+      this.update();
+    },
+    getCategoryColor(categoryName) {
+      const category = this.categories.find((c) => c.name === categoryName);
+      return category ? category.color : "#cccccc";
     }
   }
 };
 if (!Array) {
   const _component_PieChart = common_vendor.resolveComponent("PieChart");
-  _component_PieChart();
+  const _component_ColumnChart = common_vendor.resolveComponent("ColumnChart");
+  (_component_PieChart + _component_ColumnChart)();
 }
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return {
+  return common_vendor.e({
     a: common_vendor.o(($event) => $options.changeMonth(-1)),
     b: common_vendor.t($options.currentMonth),
     c: common_vendor.o(($event) => $options.changeMonth(1)),
-    d: common_vendor.sr("pieChart", "380879e3-0"),
-    e: common_vendor.p({
-      chartData: $data.chartData
+    d: Object.keys($data.groupBills).length === 0
+  }, Object.keys($data.groupBills).length === 0 ? {} : {}, {
+    e: common_vendor.sr("pieChart", "380879e3-0"),
+    f: common_vendor.p({
+      canvasId: "PieChartCanvas"
+    }),
+    g: common_vendor.f($data.groupBills, (item, index, i0) => {
+      return {
+        a: $options.getCategoryColor(item.name),
+        b: common_vendor.t(item.name),
+        c: common_vendor.t(item.value.toString()),
+        d: index
+      };
+    }),
+    h: common_vendor.sr("columnChart", "380879e3-1"),
+    i: common_vendor.p({
+      canvasId: "ColumnChart"
     })
-  };
+  });
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render]]);
 wx.createPage(MiniProgramPage);

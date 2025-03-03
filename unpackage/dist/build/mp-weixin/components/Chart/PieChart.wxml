@@ -1,0 +1,1 @@
+<view class="data-v-2c4a0810"><block wx:if="{{r0}}"><canvas canvas-id="{{a}}" id="{{b}}" class="charts data-v-2c4a0810" bindtouchend="{{c}}"/></block></view>

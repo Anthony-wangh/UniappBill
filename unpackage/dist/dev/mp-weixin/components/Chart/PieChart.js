@@ -3,20 +3,11 @@ const common_vendor = require("../../common/vendor.js");
 const uni_modules_qiunDataCharts_js_sdk_uCharts_uCharts = require("../../uni_modules/qiun-data-charts/js_sdk/u-charts/u-charts.js");
 var uChartsInstance = {};
 const _sfc_main = {
-  props: {
-    chartData: {
-      type: Object,
-      required: true
-    },
-    canvasId: {
-      type: String,
-      default: "ArBwWAWJdkXMBnJcQJJNACsjnSNbpxaM"
-    }
-  },
   data() {
     return {
-      cWidth: 750,
-      cHeight: 500
+      canvasId: {
+        type: String
+      }
     };
   },
   methods: {
@@ -34,7 +25,17 @@ const _sfc_main = {
         rotate: false,
         rotateLock: false,
         background: "#FFFFFF",
-        color: ["#1890FF", "#91CB74", "#FAC858", "#EE6666", "#73C0DE", "#3CA272", "#FC8452", "#9A60B4", "#ea7ccc"],
+        color: [
+          "#1890FF",
+          "#91CB74",
+          "#FAC858",
+          "#EE6666",
+          "#73C0DE",
+          "#3CA272",
+          "#FC8452",
+          "#9A60B4",
+          "#ea7ccc"
+        ],
         padding: [5, 5, 5, 5],
         fontSize: 13,
         fontColor: "#666666",
@@ -110,8 +111,8 @@ const _sfc_main = {
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
-    a: $props.canvasId,
-    b: $props.canvasId,
+    a: $data.canvasId,
+    b: $data.canvasId,
     c: common_vendor.o((...args) => $options.tap && $options.tap(...args))
   };
 }
