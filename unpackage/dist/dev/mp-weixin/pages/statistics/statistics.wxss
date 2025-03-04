@@ -29,7 +29,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #96C560;
+  background-color: #7bc7cf;
   padding: 5px 0;
 }
 .month-picker .arrow {
@@ -77,16 +77,14 @@
   align-items: center;
 }
 .bill-list .bill-item .left .category-color {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 25px;
+  height: 25px;
   margin-right: 10px;
 }
 .bill-list .bill-item .left .info .category {
   display: block;
   font-size: 14px;
   color: #505050;
-  margin-bottom: 5px;
 }
 .bill-list .bill-item .amount {
   font-size: 15px;

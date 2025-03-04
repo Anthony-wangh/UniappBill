@@ -13,6 +13,7 @@
 			本月无账单
 		</view>
 
+		<view>
 		<text class="pieChartTitle">当月支出排行</text>
 		<PieChart ref="pieChart" canvasId='PieChartCanvas'>
 		</PieChart>
@@ -23,7 +24,8 @@
 			<!-- 账单项 -->
 			<view v-for="(item, index) in groupBills" :key="index" class="bill-item">
 				<view class="left">
-					<view class="category-color" :style="{backgroundColor: getCategoryColor(item.name)}"></view>
+					<image :src="getCategoryColor(item.name)" class="category-color">
+					</image>
 					<view class="info">
 						<text class="category">{{ item.name }}</text>
 					</view>
@@ -37,6 +39,7 @@
 		<text class="columnChartTitle">每日账单</text>
 		<ColumnChart ref="columnChart" canvasId='ColumnChart'>
 		</ColumnChart>
+		</view>
 	</view>
 
 
@@ -105,23 +108,52 @@
 				categories: [{
 						name: '购物',
 						color: '#ff6b6b',
-						type: 'expense'
+						type: 'expense',
+						icon: 'Groceries'
 					},
 					{
 						name: '餐饮',
 						color: '#48dbfb',
-						type: 'expense'
+						type: 'expense',
+						icon: 'Restaurant'
 					},
 					{
 						name: '交通',
 						color: '#f368e0',
-						type: 'expense'
+						type: 'expense',
+						icon: 'Transportation'
 					},
 					{
-						name: '房屋',
+						name: '娱乐',
+						color: '#ff9f1c',
+						type: 'expense',
+						icon: 'Party'
+					},
+					{
+						name: '健康',
 						color: '#eb3b5a',
-						type: 'expense'
-					}
+						type: 'expense',
+						icon: 'Health'
+					},
+					{
+						name: '电子',
+						color: '#f368e0',
+						type: 'expense',
+						icon: 'Electronics'
+					},
+					{
+						name: '礼物',
+						color: '#ff9f1c',
+						type: 'expense',
+						icon: 'Electronics'
+					},
+					{
+						name: '起居',
+						color: '#eb3b5a',
+						type: 'expense',
+						icon: 'Institute'
+					},
+
 				],
 				currentDate: new Date(),
 			};
@@ -132,10 +164,9 @@
 		},
 		computed: {
 			currentMonth() {
-				return this.currentDate.toLocaleDateString('zh-CN', {
-					year: 'numeric',
-					month: 'long'
-				});
+				const year = this.currentDate.getFullYear();
+				const month = this.currentDate.getMonth() + 1; // getMonth() 返回 0-11，需要 +1
+				return `${year}年${month}月`;
 			}
 		},
 		methods: {
@@ -144,9 +175,9 @@
 				this.filterBillsByMonth();
 				this.updatePieChart();
 				this.updateColumnChart();
-				
-				this.$refs.pieChart.drawCharts(this.chartData);
-				this.$refs.columnChart.drawCharts(this.columnChartData);
+
+				this.$refs.pieChart?.drawCharts(this.chartData);
+				this.$refs.columnChart?.drawCharts(this.columnChartData);
 			},
 
 			loadBills() {
@@ -178,17 +209,17 @@
 						.toFixed(2);
 
 					sery.value = Number(v);
-					grouped.push(sery);
+					if(sery.value>0){
+						grouped.push(sery);
+					}					
 				});
 
 				var templateData = {};
 				const seriesItem = {};
 				seriesItem.data = grouped;
 				templateData.series = [seriesItem];
-				this.chartData =templateData;				
-				this.groupBills = grouped.sort((a, b) => {
-					return a.value > b.value
-				});
+				this.chartData = templateData;
+				this.groupBills = grouped.sort((a, b) => b.value - a.value);
 			},
 			updateColumnChart() {
 				const groupedExpense = {};
@@ -240,7 +271,7 @@
 				templateData.categories = days;
 				templateData.series = [seriesItem1, seriesItem2];
 
-				this.columnChartData =templateData;
+				this.columnChartData = templateData;
 			},
 
 			changeMonth(offset) {
@@ -251,7 +282,7 @@
 			},
 			getCategoryColor(categoryName) {
 				const category = this.categories.find(c => c.name === categoryName);
-				return category ? category.color : '#cccccc';
+				return `/static/typeIcons/${category ? category.icon : 'Maintenance'}.png` ;
 			},
 		}
 	};
@@ -263,7 +294,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background-color: #96C560;
+		background-color: #7bc7cf;
 		padding: 5px 0;
 
 		.arrow {
@@ -316,9 +347,8 @@
 				align-items: center;
 
 				.category-color {
-					width: 10px;
-					height: 10px;
-					border-radius: 50%;
+					width: 25px;
+					height: 25px;
 					margin-right: 10px;
 				}
 
@@ -327,7 +357,7 @@
 						display: block;
 						font-size: 14px;
 						color: #505050;
-						margin-bottom: 5px;
+						//margin-bottom: 5px;
 					}
 				}
 			}

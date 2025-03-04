@@ -45,14 +45,15 @@
         <!-- 账单项 -->
         <view v-for="(item, index) in group" :key="index" class="bill-item">
           <view class="left">
-            <view class="category-color" :style="{backgroundColor: getCategoryColor(item.category)}"></view>
+            <image :src="getCategoryColor(item.category)" class="category-color">				
+			</image>
             <view class="info">
               <text class="category">{{ item.category }}</text>
               <text class="remark" v-if="item.remark">{{ item.remark }}</text>
             </view>
           </view>
-          <view :class="['amount', item.type === 'income' ? 'income' : 'expense']">
-            {{ item.type === 'income' ? '+' : '-' }}{{ item.amount }}
+          <view :class="['amount', item.type === '收入' ? 'income' : 'expense']">
+            {{ item.type === '收入' ? '+' : '-' }}{{ item.amount }}
           </view>
         </view>
       </view>
@@ -60,24 +61,30 @@
 
     <!-- 底部导航栏 -->
     <view class="navigation-bar">
-      <button 
-        class="nav-btn add-bill-btn" 
-        @click="navigateTo('addBill')"
-      >
-        添加账单
-      </button>
+      
      
       <IconButton 
         class="nav-btn" 
-		iconSrc="/static/qq.png"
+		iconSrc="/static/statisticsBtn.png"
 		label="统计"
         @click="navigateTo('statistics')"
       >
         统计
       </IconButton>
+	  
+	  
+	  <IconButton
+	    class="nav-btn add-bill-btn" 
+	  		iconSrc="/static/addBill.png"
+	  		label="添加"
+	    @click="navigateTo('addBill')"
+	  >
+	    添加账单
+	  </IconButton>
+	  
       <IconButton 
-        class="nav-btn" 
-		iconSrc="/static/qq.png"
+        class="nav-btn" a
+		iconSrc="/static/settingsBtn.png"
 		label="设置"
         @click="navigateTo('settings')"
       >
@@ -94,13 +101,17 @@ export default {
     return {
       bills: [],
       categories: [
-        { name: '购物', color: '#ff6b6b', type: 'expense' },
-        { name: '餐饮', color: '#48dbfb', type: 'expense' },
-        { name: '交通', color: '#f368e0', type: 'expense' },
-        { name: '娱乐', color: '#ff9f1c', type: 'expense' },
-        { name: '房屋', color: '#eb3b5a', type: 'expense' },
-        { name: '工资', color: '#1dd1a1', type: 'income' },
-        { name: '奖金', color: '#2ecc71', type: 'income' }
+        { name: '购物', color: '#ff6b6b', type: '支出' ,icon:'Groceries'},
+        { name: '餐饮', color: '#48dbfb', type: '支出' ,icon:'Restaurant'},
+        { name: '交通', color: '#f368e0', type: '支出' ,icon:'Transportation'},
+        { name: '娱乐', color: '#ff9f1c', type: '支出' ,icon:'Party'},
+        { name: '健康', color: '#eb3b5a', type: '支出' ,icon:'Health'},
+		{ name: '电子', color: '#f368e0', type: '支出' ,icon:'Electronics'},
+		{ name: '礼物', color: '#ff9f1c', type: '支出' ,icon:'Electronics'},
+		{ name: '起居', color: '#eb3b5a', type: '支出' ,icon:'Institute'},
+		
+        { name: '工资', color: '#1dd1a1', type: '收入' ,icon:'Money'},
+        { name: '理财', color: '#2ecc71', type: '收入' ,icon:'Savings'}
       ],
       totalIncome: 0,
       totalExpense: 0,
@@ -114,7 +125,9 @@ export default {
   },
   computed: {
     currentMonth() {
-      return this.currentDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' });
+		const year = this.currentDate.getFullYear();
+		const month = this.currentDate.getMonth() + 1; // getMonth() 返回 0-11，需要 +1
+		return `${year}年${month}月`;
     },
     balance() {
       return  Number(this.budget)+Number(this.totalIncome) - Number(this.totalExpense);
@@ -122,7 +135,7 @@ export default {
   },
   onShow() {
     this.loadBills();
-	this.budget=uni.getStorageSync('budget') || 0 ;
+	this.budget=uni.getStorageSync('budget') || 1000 ;
   },
   methods: {
     loadBills() {
@@ -155,14 +168,16 @@ export default {
     },
     calculateTotal(bills) {
       this.totalIncome = bills
-        .filter(item => item.type === 'income')
+        .filter(item => item.type === '收入')
         .reduce((sum, item) => sum + Number(item.amount), 0)
         .toFixed(2);
 
+
       this.totalExpense = bills
-        .filter(item => item.type === 'expense')
+        .filter(item => item.type === '支出')
         .reduce((sum, item) => sum + Number(item.amount), 0)
         .toFixed(2);
+		
     },
     changeMonth(offset) {
       const newDate = new Date(this.currentDate);
@@ -172,7 +187,10 @@ export default {
     },
     formatDate(dateString) {
       const date = new Date(dateString);
-      return date.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
+	  const year = date.getFullYear();
+	  const month = date.getMonth() + 1; // getMonth() 返回 0-11，需要 +1
+	  const day =date.getDate();
+	  return `${year}年${month}月${day}日`;
     },
     formatTime(timestamp) {
       const date = new Date(timestamp);
@@ -180,7 +198,7 @@ export default {
     },
     getCategoryColor(categoryName) {
       const category = this.categories.find(c => c.name === categoryName);
-      return category ? category.color : '#cccccc';
+      return `/static/typeIcons/${category ? category.icon : 'Maintenance'}.png` ;
     },
     navigateTo(page) {
       uni.navigateTo({
@@ -204,10 +222,10 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #96C560;
+    background-color: #7bc7cf;
     //border-radius: 0px;
     //margin-bottom: 20px;
-	padding: 5px 0;
+	padding: 7px 0;
 
     .arrow {
       font-size: 18px;
@@ -321,9 +339,8 @@ export default {
         align-items: center;
 
         .category-color {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
+          width: 35px;
+          height: 35px;
           margin-right: 10px;
         }
 
@@ -331,13 +348,13 @@ export default {
           .category {
             display: block;
             font-size: 16px;
-            color: #333;
+            color: #282828;
             margin-bottom: 5px;
           }
 
           .remark {
             font-size: 12px;
-            color: #797979;
+            color: #848484;
             margin-top: 3px;
           }
         }
@@ -347,7 +364,7 @@ export default {
         font-size: 18px;
 
         &.income {
-          color: #67d1c1;
+          color: #7bc7cf;
         }
 
         &.expense {
@@ -359,42 +376,41 @@ export default {
 
   /* 底部导航栏 */
   .navigation-bar {
-    //position: fixed;
-    //bottom: 0;
-    //left: 0;
     width: 100%;
 	height: 50px;
     display: flex;
-    //justify-content: space-around;
-	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+	//box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     background-color: rgba(255, 255, 255, 1.0); /* 半透明背景 */
     backdrop-filter: blur(10px); /* 模糊效果 */
-    padding: 10px 0;
-    z-index: 1000;
+    padding: 10px;
+    //z-index: 1000;
+	margin-bottom: 0;
     //border-top: 1px solid #e0e0e0;
 
     .nav-btn {
       font-size: 14px;
-      color: #828282;
-	  background-color:transparent;
-	  padding: 10px 20px;
-	  border:none;
-
-      &.add-bill-btn {
-        font-size: 16px;
-        font-weight: bold;
-        color: #ffffff;
-        background-color: #96C560;
-        border-radius: 5px;
-        padding: 10px 20px;
-
-        &:active {
-          background-color: #27ae60;
-          transform: scale(0.98);
-        }
-      }
-
+	  //background-color:transparent;
+		padding: 0px 40px 10px 20px;
+	  // border:none; 
+	  
+	  &.add-bill-btn {
+	  	transform: scale(1.2);
+		font-weight: bold;
+	  //   font-size: 16px;
+	  //   font-weight: bold;
+	  //   color: #ffffff;
+	  //   background-color: #7bc7cf;
+	  //   border-radius: 20px;
+	   padding: 0px 40px 20px 20px;
+	  
+	  //   &:active {
+	  //     background-color: #92c7cf;
+	  //     transform: scale(0.98);
+	  //   }
+	  }
     }
+	
   }
 }
 </style>

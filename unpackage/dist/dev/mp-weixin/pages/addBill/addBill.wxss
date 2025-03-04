@@ -24,10 +24,9 @@
 /* 透明度 */
 /* 文章场景相关 */
 .add-bill-container {
-  padding: 20px;
+  width: 100%;
+  padding: 20px 30px;
   background-color: #f5f5f5;
-  height: calc(100vh - 60px);
-  /* 减去底部导航栏的高度 */
   box-sizing: border-box;
 }
 .add-bill-container .form-group {
@@ -35,35 +34,46 @@
 }
 .add-bill-container .form-group label {
   display: block;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: bold;
   color: #666;
   margin-bottom: 5px;
 }
-.add-bill-container .form-group picker, .add-bill-container .form-group input {
+.add-bill-container .form-group .input-field, .add-bill-container .form-group .picker {
   width: 100%;
-  padding: 10px;
+  height: 45px;
+  padding: 0 15px;
   border: 1px solid #e0e0e0;
-  border-radius: 5px;
+  border-radius: 8px;
   background-color: #ffffff;
   font-size: 14px;
   color: #333;
-}
-.add-bill-container .form-group picker {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  cursor: pointer;
+  box-sizing: border-box;
 }
-.add-bill-container .form-group input::-webkit-input-placeholder {
+.add-bill-container .form-group .picker {
+  display: block;
+}
+.add-bill-container .form-group .picker-text {
+  flex: 1;
+  text-align: left;
+  line-height: 45px;
+}
+.add-bill-container .form-group .input-field {
+  line-height: 45px;
+}
+.add-bill-container .form-group .input-field::-webkit-input-placeholder {
   color: #999;
 }
-.add-bill-container .form-group input::placeholder {
+.add-bill-container .form-group .input-field::placeholder {
   color: #999;
 }
 .add-bill-container .submit-btn {
   width: 100%;
   padding: 15px;
-  background-color: #2ecc71;
+  background-color: #7bc7cf;
   color: #fff;
   font-size: 16px;
   text-align: center;
@@ -72,5 +82,5 @@
   cursor: pointer;
 }
 .add-bill-container .submit-btn:active {
-  background-color: #27ae60;
+  background-color: #a7cbcf;
 }

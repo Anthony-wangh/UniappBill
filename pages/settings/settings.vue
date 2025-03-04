@@ -19,6 +19,10 @@
       />
       <button @click="saveBudget" class="save-button">确定</button>
     </view>
+	
+	<view>
+		<button @click="clearMemory" class="clear-button">清空缓存</button>
+	</view>
   </view>
 </template>
 
@@ -33,7 +37,7 @@ export default {
   },
   onLoad() {
     // 尝试从本地存储中加载预算
-    const savedBudget = uni.getStorageSync('budget');
+    const savedBudget = uni.getStorageSync('budget')|| 1000;
     if (savedBudget) {
       this.budget = savedBudget;
     }
@@ -59,7 +63,14 @@ export default {
       uni.setStorageSync('budget', this.budget); // 保存到本地存储
 
       this.isEditing = false; // 退出编辑模式
-    }
+    },
+	clearMemory(){
+		uni.setStorageSync('bills', null);
+		uni.showToast({
+			title: '已清除账单缓存',
+			icon: 'success'
+		});
+	}
   }
 };
 </script>
@@ -70,46 +81,60 @@ export default {
   background-color: #f5f5f5;
   height: 100vh;
   box-sizing: border-box;
+  
 }
 
-.budget-display {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  
 
-.budget-text {
-  font-size: 20px;
-  color: #333;
-}
+ .budget-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .budget-text {
+    font-size: 20px;
+    color: #333;
+  }
+  
+  .edit-button {
+    padding: 2px 20px;
+    background-color: #7bc7cf;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+  }
+  
+  .budget-edit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .budget-input {
+    width: 70%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+  }
+  
+  .save-button {
+    padding: 2px 20px;
+    background-color: #7bc7cf;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+  }
 
-.edit-button {
-  padding: 8px 15px;
-  background-color: #1aad19;
-  color: #fff;
-  border-radius: 5px;
-  border: none;
-}
 
-.budget-edit {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.budget-input {
-  width: 70%;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  font-size: 16px;
-}
-
-.save-button {
-  padding: 8px 15px;
-  background-color: #2ecc71;
-  color: #fff;
-  border-radius: 5px;
-  border: none;
-}
+	.clear-button{
+	top: 40px;
+ 	padding: 5px 50px;
+ 	background-color: #7bc7cf;
+ 	color: #fff;
+ 	border-radius: 5px;
+ 	border: none;	
+	
+ }
 </style>

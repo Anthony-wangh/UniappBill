@@ -26,10 +26,10 @@
 		}
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
+		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "小胖账本",
-		"navigationBarBackgroundColor": "#96C560",
-		"backgroundColor": "#f8f8f8"
+		"navigationBarBackgroundColor": "#7bc7cf",
+		"backgroundColor": "#7bc7cf"
 	},
 	"uniIdRouter": {}
 }

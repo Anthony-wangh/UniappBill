@@ -12,7 +12,7 @@ const _sfc_main = {
     };
   },
   onLoad() {
-    const savedBudget = common_vendor.index.getStorageSync("budget");
+    const savedBudget = common_vendor.index.getStorageSync("budget") || 1e3;
     if (savedBudget) {
       this.budget = savedBudget;
     }
@@ -36,6 +36,13 @@ const _sfc_main = {
       this.budget = parsedBudget;
       common_vendor.index.setStorageSync("budget", this.budget);
       this.isEditing = false;
+    },
+    clearMemory() {
+      common_vendor.index.setStorageSync("bills", null);
+      common_vendor.index.showToast({
+        title: "已清除账单缓存",
+        icon: "success"
+      });
     }
   }
 };
@@ -49,6 +56,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     d: $data.newBudget,
     e: common_vendor.o(($event) => $data.newBudget = $event.detail.value),
     f: common_vendor.o((...args) => $options.saveBudget && $options.saveBudget(...args))
+  }, {
+    g: common_vendor.o((...args) => $options.clearMemory && $options.clearMemory(...args))
   });
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-7fad0a1c"]]);

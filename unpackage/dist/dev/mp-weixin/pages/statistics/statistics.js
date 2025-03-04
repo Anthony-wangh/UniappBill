@@ -58,22 +58,50 @@ const _sfc_main = {
         {
           name: "购物",
           color: "#ff6b6b",
-          type: "expense"
+          type: "expense",
+          icon: "Groceries"
         },
         {
           name: "餐饮",
           color: "#48dbfb",
-          type: "expense"
+          type: "expense",
+          icon: "Restaurant"
         },
         {
           name: "交通",
           color: "#f368e0",
-          type: "expense"
+          type: "expense",
+          icon: "Transportation"
         },
         {
-          name: "房屋",
+          name: "娱乐",
+          color: "#ff9f1c",
+          type: "expense",
+          icon: "Party"
+        },
+        {
+          name: "健康",
           color: "#eb3b5a",
-          type: "expense"
+          type: "expense",
+          icon: "Health"
+        },
+        {
+          name: "电子",
+          color: "#f368e0",
+          type: "expense",
+          icon: "Electronics"
+        },
+        {
+          name: "礼物",
+          color: "#ff9f1c",
+          type: "expense",
+          icon: "Electronics"
+        },
+        {
+          name: "起居",
+          color: "#eb3b5a",
+          type: "expense",
+          icon: "Institute"
         }
       ],
       currentDate: /* @__PURE__ */ new Date()
@@ -85,19 +113,19 @@ const _sfc_main = {
   },
   computed: {
     currentMonth() {
-      return this.currentDate.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "long"
-      });
+      const year = this.currentDate.getFullYear();
+      const month = this.currentDate.getMonth() + 1;
+      return `${year}年${month}月`;
     }
   },
   methods: {
     update() {
+      var _a, _b;
       this.filterBillsByMonth();
       this.updatePieChart();
       this.updateColumnChart();
-      this.$refs.pieChart.drawCharts(this.chartData);
-      this.$refs.columnChart.drawCharts(this.columnChartData);
+      (_a = this.$refs.pieChart) == null ? void 0 : _a.drawCharts(this.chartData);
+      (_b = this.$refs.columnChart) == null ? void 0 : _b.drawCharts(this.columnChartData);
     },
     loadBills() {
       const bills = common_vendor.index.getStorageSync("bills") || [];
@@ -118,16 +146,16 @@ const _sfc_main = {
         sery.name = category.name;
         const v = this.billsInCurrentMouth.filter((item) => item.category === category.name).reduce((sum, item) => sum + Number(item.amount), 0).toFixed(2);
         sery.value = Number(v);
-        grouped.push(sery);
+        if (sery.value > 0) {
+          grouped.push(sery);
+        }
       });
       var templateData = {};
       const seriesItem = {};
       seriesItem.data = grouped;
       templateData.series = [seriesItem];
       this.chartData = templateData;
-      this.groupBills = grouped.sort((a, b) => {
-        return a.value > b.value;
-      });
+      this.groupBills = grouped.sort((a, b) => b.value - a.value);
     },
     updateColumnChart() {
       const groupedExpense = {};
@@ -184,7 +212,7 @@ const _sfc_main = {
     },
     getCategoryColor(categoryName) {
       const category = this.categories.find((c) => c.name === categoryName);
-      return category ? category.color : "#cccccc";
+      return `/static/typeIcons/${category ? category.icon : "Maintenance"}.png`;
     }
   }
 };

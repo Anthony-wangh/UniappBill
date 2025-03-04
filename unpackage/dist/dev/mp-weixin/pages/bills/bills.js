@@ -5,13 +5,16 @@ const _sfc_main = {
     return {
       bills: [],
       categories: [
-        { name: "购物", color: "#ff6b6b", type: "expense" },
-        { name: "餐饮", color: "#48dbfb", type: "expense" },
-        { name: "交通", color: "#f368e0", type: "expense" },
-        { name: "娱乐", color: "#ff9f1c", type: "expense" },
-        { name: "房屋", color: "#eb3b5a", type: "expense" },
-        { name: "工资", color: "#1dd1a1", type: "income" },
-        { name: "奖金", color: "#2ecc71", type: "income" }
+        { name: "购物", color: "#ff6b6b", type: "支出", icon: "Groceries" },
+        { name: "餐饮", color: "#48dbfb", type: "支出", icon: "Restaurant" },
+        { name: "交通", color: "#f368e0", type: "支出", icon: "Transportation" },
+        { name: "娱乐", color: "#ff9f1c", type: "支出", icon: "Party" },
+        { name: "健康", color: "#eb3b5a", type: "支出", icon: "Health" },
+        { name: "电子", color: "#f368e0", type: "支出", icon: "Electronics" },
+        { name: "礼物", color: "#ff9f1c", type: "支出", icon: "Electronics" },
+        { name: "起居", color: "#eb3b5a", type: "支出", icon: "Institute" },
+        { name: "工资", color: "#1dd1a1", type: "收入", icon: "Money" },
+        { name: "理财", color: "#2ecc71", type: "收入", icon: "Savings" }
       ],
       totalIncome: 0,
       totalExpense: 0,
@@ -26,7 +29,9 @@ const _sfc_main = {
   },
   computed: {
     currentMonth() {
-      return this.currentDate.toLocaleDateString("zh-CN", { year: "numeric", month: "long" });
+      const year = this.currentDate.getFullYear();
+      const month = this.currentDate.getMonth() + 1;
+      return `${year}年${month}月`;
     },
     balance() {
       return Number(this.budget) + Number(this.totalIncome) - Number(this.totalExpense);
@@ -34,7 +39,7 @@ const _sfc_main = {
   },
   onShow() {
     this.loadBills();
-    this.budget = common_vendor.index.getStorageSync("budget") || 0;
+    this.budget = common_vendor.index.getStorageSync("budget") || 1e3;
   },
   methods: {
     loadBills() {
@@ -65,8 +70,8 @@ const _sfc_main = {
       this.groupedBills = grouped;
     },
     calculateTotal(bills) {
-      this.totalIncome = bills.filter((item) => item.type === "income").reduce((sum, item) => sum + Number(item.amount), 0).toFixed(2);
-      this.totalExpense = bills.filter((item) => item.type === "expense").reduce((sum, item) => sum + Number(item.amount), 0).toFixed(2);
+      this.totalIncome = bills.filter((item) => item.type === "收入").reduce((sum, item) => sum + Number(item.amount), 0).toFixed(2);
+      this.totalExpense = bills.filter((item) => item.type === "支出").reduce((sum, item) => sum + Number(item.amount), 0).toFixed(2);
     },
     changeMonth(offset) {
       const newDate = new Date(this.currentDate);
@@ -76,7 +81,10 @@ const _sfc_main = {
     },
     formatDate(dateString) {
       const date = new Date(dateString);
-      return date.toLocaleDateString("zh-CN", { month: "long", day: "numeric" });
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      return `${year}年${month}月${day}日`;
     },
     formatTime(timestamp) {
       const date = new Date(timestamp);
@@ -84,7 +92,7 @@ const _sfc_main = {
     },
     getCategoryColor(categoryName) {
       const category = this.categories.find((c) => c.name === categoryName);
-      return category ? category.color : "#cccccc";
+      return `/static/typeIcons/${category ? category.icon : "Maintenance"}.png`;
     },
     navigateTo(page) {
       common_vendor.index.navigateTo({
@@ -127,24 +135,29 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           }, item.remark ? {
             d: common_vendor.t(item.remark)
           } : {}, {
-            e: common_vendor.t(item.type === "income" ? "+" : "-"),
+            e: common_vendor.t(item.type === "收入" ? "+" : "-"),
             f: common_vendor.t(item.amount),
-            g: common_vendor.n(item.type === "income" ? "income" : "expense"),
+            g: common_vendor.n(item.type === "收入" ? "income" : "expense"),
             h: index
           });
         }),
         c: date
       };
     }),
-    k: common_vendor.o(($event) => $options.navigateTo("addBill")),
-    l: common_vendor.o(($event) => $options.navigateTo("statistics")),
-    m: common_vendor.p({
-      iconSrc: "/static/qq.png",
+    k: common_vendor.o(($event) => $options.navigateTo("statistics")),
+    l: common_vendor.p({
+      iconSrc: "/static/statisticsBtn.png",
       label: "统计"
     }),
-    n: common_vendor.o(($event) => $options.navigateTo("settings")),
-    o: common_vendor.p({
-      iconSrc: "/static/qq.png",
+    m: common_vendor.o(($event) => $options.navigateTo("addBill")),
+    n: common_vendor.p({
+      iconSrc: "/static/addBill.png",
+      label: "添加"
+    }),
+    o: common_vendor.o(($event) => $options.navigateTo("settings")),
+    p: common_vendor.p({
+      a: true,
+      iconSrc: "/static/settingsBtn.png",
       label: "设置"
     })
   });

@@ -15,8 +15,8 @@ const _sfc_main = {
       },
       types: ["支出", "收入"],
       categories: {
-        支出: ["购物", "餐饮", "交通", "娱乐", "房屋"],
-        收入: ["工资", "奖金"]
+        支出: ["购物", "餐饮", "交通", "娱乐", "健康", "礼物", "电子", "居住"],
+        收入: ["工资", "理财"]
       },
       selectCategories: []
     };
@@ -26,10 +26,9 @@ const _sfc_main = {
       this.bill.date = e.detail.value;
     },
     validateAmount(e) {
-      const value = e.detail.value;
-      if (!/^\d*\.?\d*$/.test(value)) {
-        this.bill.amount = value.replace(/[^0-9.]/g, "");
-      }
+      let value = e.detail.value;
+      value = value.replace(/[^0-9.]/g, "").replace(/^0+(\d)/, "$1").replace(/\.{2,}/g, ".").replace(/^(\d+)\.(\d{2})\d*$/, "$1.$2");
+      this.bill.amount = value;
     },
     onTypeChange(e) {
       const index = e.detail.value;
@@ -70,7 +69,7 @@ const _sfc_main = {
         title: "账单添加成功",
         icon: "success"
       });
-      this.$emit("navigateTo", "bills");
+      common_vendor.index.navigateBack();
     }
   }
 };
